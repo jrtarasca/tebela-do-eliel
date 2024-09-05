@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataTables Ajax Example</title>
+
+    <!-- Incluir CSS do DataTables -->
+    <link href="https://cdn.datatables.net/2.0.5/css/dataTables.dataTables.min.css" rel="stylesheet" />
+</head>
+<body>
+    <h1>Tabela Do Eliel</h1>
+    
+    <!-- Botão para ocultar/mostrar coluna a coluda de ID -->
+    <button id="toggle-column-btn">Ocultar Coluna "ID"</button>
+    
+    <table id="tabela" class="display" style="width:100%">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Position</th>
+                <th>Office</th>
+                <th>Extn.</th>
+                <th>Start date</th>
+                <th>Salary</th>
+                <th></th>
+            </tr>
+        </thead>
+    </table>
+
+    <!-- Incluir jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.datatables.net/2.0.5/js/dataTables.min.js" crossorigin="anonymous"></script>
+
+    <script>
+    $(document).ready(function() {
+        // Inicializa o DataTable
+        var table = $("#tabela").DataTable({
+            language: {
+                "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Portuguese-Brasil.json"
+            },
+            ajax: '/js/objects.txt',
+            columns: [
+                { data: 'id' },
+                { data: 'name' },
+                { data: 'position' },
+                { data: 'office' },
+                { data: 'extn' },
+                {
+                    data: 'start_date',
+                    render: function(data) {
+                        if (data) {
+                            let dataObj = new Date(data);
+                            let dia = String(dataObj.getDate()).padStart(2, '0');
+                            let mes = String(dataObj.getMonth() + 1).padStart(2, '0');
+                            let ano = dataObj.getFullYear();
+                            return `${dia}/${mes}/${ano}`;
+                        }
+                        return data;
+                    }
+                },
+                { data: 'salary' },
+                {
+                    data: null,
+                    defaultContent: '<button class="delete-btn">X</button>',
+                    orderable: false
+                }
+            ]
+        });
+
+        // Função para remover linha ao clicar no botão "Deletar"
+        $('#tabela tbody').on('click', '.delete-btn', function() {
+            var row = table.row($(this).parents('tr'));
+            var confirmarExclusao = confirm("Você tem certeza que deseja excluir esta linha?");
+            if (confirmarExclusao) {
+                row.remove().draw();
+            }
+        });
+
+        // Função para ocultar/mostrar a coluna "ID"
+        var columnVisible = true; 
+
+        $("#toggle-column-btn").on('click', function() {
+            var column = table.column(0);  // Coluna de índice 0 é a "ID"
+            columnVisible = !columnVisible;
+            column.visible(columnVisible);
+
+            // Atualiza o texto do botão conforme o estado da coluna
+            if (columnVisible) {
+                $("#toggle-column-btn").text('Ocultar Coluna "ID"');
+            } else {
+                $("#toggle-column-btn").text('Mostrar Coluna "ID"');
+            }
+        });
+    });
+    </script>
+</body>
+</html>
