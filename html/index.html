@@ -69,7 +69,7 @@
             ]
         });
 
-        // Função para remover linha ao clicar no botão "Deletar"
+        // Função para remover linha ao clicar no botão "x"
         $('#tabela tbody').on('click', '.delete-btn', function() {
             var row = table.row($(this).parents('tr'));
             var confirmarExclusao = confirm("Você tem certeza que deseja excluir esta linha?");
